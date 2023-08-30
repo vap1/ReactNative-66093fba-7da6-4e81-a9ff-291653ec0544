@@ -1,17 +1,17 @@
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text } from 'react-native';
 import { fetchMetadata } from '../apis/fetchMetadata';
 import { Metadata } from '../types/Types';
 
-const MetadataDisplayScreen: React.FC = () => {
+const MetadataDisplayScreen = () => {
   const [metadata, setMetadata] = useState<Metadata[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchMetadata();
-        setMetadata(response);
+        const data = await fetchMetadata();
+        setMetadata(data);
       } catch (error) {
         console.error('Error fetching metadata:', error);
       }
@@ -20,23 +20,21 @@ const MetadataDisplayScreen: React.FC = () => {
     fetchData();
   }, []);
 
-  const renderMetadataItem = ({ item }: { item: Metadata }) => (
-    <View>
-      <Text>{item.userName}</Text>
-      <Text>{item.userAge}</Text>
-      <Text>{item.userLocation}</Text>
-      {/* Render other metadata fields */}
-    </View>
-  );
-
   return (
     <View>
-      <Text>Metadata Display</Text>
-      <FlatList
-        data={metadata}
-        renderItem={renderMetadataItem}
-        keyExtractor={(item) => item.metadataId}
-      />
+      {metadata.length > 0 ? (
+        metadata.map((item) => (
+          <View key={item.metadataId}>
+            <Text>User ID: {item.userId}</Text>
+            <Text>User Name: {item.userName}</Text>
+            <Text>User Age: {item.userAge}</Text>
+            <Text>User Location: {item.userLocation}</Text>
+            {/* Display other metadata fields as needed */}
+          </View>
+        ))
+      ) : (
+        <Text>Loading...</Text>
+      )}
     </View>
   );
 };
