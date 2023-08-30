@@ -2,15 +2,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { fetchHomepageData } from '../apis/fetchHomepageData';
+import { HomepageData } from '../types/Types';
 
-const HomepageScreen: React.FC = () => {
-  const [homepageData, setHomepageData] = useState<any>(null);
+const HomepageScreen = () => {
+  const [homepageData, setHomepageData] = useState<HomepageData | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchHomepageData();
-        setHomepageData(response);
+        const data = await fetchHomepageData();
+        setHomepageData(data);
       } catch (error) {
         console.error('Error fetching homepage data:', error);
       }
@@ -28,7 +29,7 @@ const HomepageScreen: React.FC = () => {
           <Text>Last Updated: {homepageData.lastUpdated}</Text>
         </>
       ) : (
-        <Text>Loading homepage data...</Text>
+        <Text>Loading...</Text>
       )}
     </View>
   );
