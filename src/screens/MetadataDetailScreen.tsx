@@ -1,60 +1,45 @@
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { fetchDetailedMetadata } from '../apis/fetchDetailedMetadata';
-import { Metadata } from '../types/Types';
+import { View, Text } from 'react-native';
+import { fetchDetailedMetadata, FetchDetailedMetadataRequest, Metadata } from '../apis/fetchDetailedMetadata';
+import { useParams } from 'react-router-native';
 
-type MetadataDetailScreenProps = {
-  metadataId: string;
-};
-
-const MetadataDetailScreen: React.FC<MetadataDetailScreenProps> = ({ metadataId }) => {
+const MetadataDetailScreen = () => {
   const [metadata, setMetadata] = useState<Metadata | null>(null);
+  const { metadataId } = useParams();
 
   useEffect(() => {
-    const fetchMetadataDetail = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetchDetailedMetadata(metadataId);
-        setMetadata(response);
+        const request: FetchDetailedMetadataRequest = {
+          metadataId: metadataId,
+        };
+        const data = await fetchDetailedMetadata(request);
+        setMetadata(data);
       } catch (error) {
-        console.error('Error fetching metadata detail:', error);
+        console.error('Error fetching detailed metadata:', error);
       }
     };
 
-    fetchMetadataDetail();
+    fetchData();
   }, [metadataId]);
 
   return (
-    <View style={styles.container}>
+    <View>
       {metadata ? (
-        <>
-          <Text style={styles.title}>{metadata.userName}</Text>
-          <Text style={styles.subtitle}>Age: {metadata.userAge}</Text>
-          <Text style={styles.subtitle}>Location: {metadata.userLocation}</Text>
-          {/* Display other metadata details here */}
-        </>
+        <View>
+          <Text>Metadata ID: {metadata.metadataId}</Text>
+          <Text>User ID: {metadata.userId}</Text>
+          <Text>User Name: {metadata.userName}</Text>
+          <Text>User Age: {metadata.userAge}</Text>
+          <Text>User Location: {metadata.userLocation}</Text>
+          {/* Display other metadata fields as needed */}
+        </View>
       ) : (
-        <Text>Loading metadata detail...</Text>
+        <Text>Loading...</Text>
       )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 18,
-    marginBottom: 5,
-  },
-});
 
 export default MetadataDetailScreen;
